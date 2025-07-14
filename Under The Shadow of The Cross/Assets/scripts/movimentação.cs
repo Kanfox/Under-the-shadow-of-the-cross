@@ -3,7 +3,13 @@ using UnityEngine;
 public class NewMonoBehaviourScript : MonoBehaviour
 {
     private float movimentoHorizontal;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private Rigidbody2D rb;
+
+    private void Obixinhovaiandar()
+    {
+       rb = GetComponent<Rigidbody2D>();
+    }
+  
     void Start()
     {
         
@@ -12,6 +18,7 @@ public class NewMonoBehaviourScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        movimentoHorizontal = Input.GetAxis("Horizontal");
     }
+
 }
