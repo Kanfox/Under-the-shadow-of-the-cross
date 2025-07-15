@@ -20,5 +20,8 @@ public class NewMonoBehaviourScript : MonoBehaviour
     {
         movimentoHorizontal = Input.GetAxis("Horizontal");
     }
-
+    private void FixedUpdate()
+    {
+        rb.velocity =
+    }
 }
