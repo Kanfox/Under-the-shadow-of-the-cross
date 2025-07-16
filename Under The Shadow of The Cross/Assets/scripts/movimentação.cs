@@ -1,10 +1,11 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class NewMonoBehaviourScript : MonoBehaviour
 {
-    private float movimentoHorizontal;
+    private float velocidademov = 5f;
     private Rigidbody2D rb;
-
+    private float movimentação;
     private void Obixinhovaiandar()
     {
        rb = GetComponent<Rigidbody2D>();
@@ -18,10 +19,22 @@ public class NewMonoBehaviourScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        movimentoHorizontal = Input.GetAxis("Horizontal");
+       movimentação = Input.GetAxis("Horizontal");
     }
     private void FixedUpdate()
     {
-        rb.velocity =
+        float moveDirection = 0f;
+            
+        if (Input.GetKey(KeyCode.D))
+        {
+            moveDirection = 1f;
+        }
+        else if (Input.GetKey(KeyCode.A))
+        {
+            moveDirection = -1f;
+        }
+
+        rb.linearVelocityY = movimentação * velocidademov;
     }
+
 }
