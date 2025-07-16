@@ -8,6 +8,15 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Cena cidade.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
+  - enabled: 1
+    path: Assets/Scenes/Cena Start.unity
+    guid: 67b341f3015c86b4abcc17dbd828a58e
+  - enabled: 1
+    path: "Assets/Scenes/Cena cr\xE9ditos.unity"
+    guid: e9aee7ffa86f89d479609fd10d93c7a2
+  - enabled: 1
+    path: Assets/Scenes/Cena inicial.unity
+    guid: f6583b16fc90e234dbbb4f8fdfc6f4a3
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
