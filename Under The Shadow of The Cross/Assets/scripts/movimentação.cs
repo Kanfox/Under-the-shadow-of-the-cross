@@ -5,26 +5,24 @@ public class NewMonoBehaviourScript : MonoBehaviour
 {
     private float velocidademov = 5f;
     private Rigidbody2D rb;
-    private float movimentação;
+    private Vector2 movimentaÃ§Ã£o;
     private void Obixinhovaiandar()
     {
-       rb = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
     }
-  
     void Start()
     {
-        
+
     }
+    
 
     // Update is called once per frame
     void Update()
     {
-       movimentação = Input.GetAxis("Horizontal");
     }
     private void FixedUpdate()
     {
         float moveDirection = 0f;
-            
         if (Input.GetKey(KeyCode.D))
         {
             moveDirection = 1f;
@@ -34,7 +32,8 @@ public class NewMonoBehaviourScript : MonoBehaviour
             moveDirection = -1f;
         }
 
-        rb.linearVelocityY = movimentação * velocidademov;
+        rb.linearVelocity = movimentaÃ§Ã£o * velocidademov;
     }
 
 }
+
