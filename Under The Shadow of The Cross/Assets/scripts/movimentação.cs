@@ -1,28 +1,20 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class NewMonoBehaviourScript : MonoBehaviour
 {
     private float velocidademov = 5f;
     private Rigidbody2D rb;
     private Vector2 movimentação;
-    private void Obixinhovaiandar()
+
+    private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
     }
-    void Start()
-    {
 
-    }
-    
-
-    // Update is called once per frame
-    void Update()
-    {
-    }
     private void FixedUpdate()
     {
         float moveDirection = 0f;
+
         if (Input.GetKey(KeyCode.D))
         {
             moveDirection = 1f;
@@ -32,8 +24,7 @@ public class NewMonoBehaviourScript : MonoBehaviour
             moveDirection = -1f;
         }
 
+        movimentação = new Vector2(moveDirection, 0f);
         rb.linearVelocity = movimentação * velocidademov;
     }
-
 }
-
