@@ -1,61 +1,42 @@
 using UnityEngine;
-using UnityEngine.AI; // Importa NavMesh
 
-public class EnemyPerception : MonoBehaviour
+using UnityEngine.UIElements;
+
+public class EnemieFollowing : MonoBehaviour
+
 {
-    public Transform player;
-    public float viewDistance = 10f;
-    public float viewAngle = 45f;
-    public LayerMask obstacleMask;
 
-    private NavMeshAgent agent;
-    private bool playerDetected = false;
+    [SerializeField] private float speed = 9;
 
-    void Start()
+    [SerializeField] private Transform target;
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+    void Awake()
+
     {
-        agent = GetComponent<NavMeshAgent>();
+
+        void Awake()
+
+        {
+
+            target = GameObject.FindGameObjectWithTag("Player").transform;
+
+        }
+
     }
+
+    // Update is called once per frame
 
     void Update()
-    {
-        if (CanSeePlayer())
-        {
-            playerDetected = true;
-            Debug.Log("Jogador detectado! Correndo atrás...");
-        }
-        else
-        {
-            playerDetected = false;
-        }
 
-        if (playerDetected)
-        {
-            // Define o destino do agente para a posição do jogador
-            agent.SetDestination(player.position);
-        }
-        else
-        {
-            // Para o inimigo se não detectar o jogador
-            agent.ResetPath();
-        }
+    {
+
+        if (target == null) return;
+
+        transform.position = Vector3.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
+
     }
 
-    bool CanSeePlayer()
-    {
-        Vector3 directionToPlayer = (player.position - transform.position).normalized;
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-
-        if (distanceToPlayer < viewDistance)
-        {
-            float angleToPlayer = Vector3.Angle(transform.forward, directionToPlayer);
-            if (angleToPlayer < viewAngle)
-            {
-                if (!Physics.Raycast(transform.position, directionToPlayer, distanceToPlayer, obstacleMask))
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 }
+
