@@ -2,19 +2,33 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
-    public Transform player; // arraste o personagem aqui no inspector
-    public float smoothSpeed = 0.125f; // suavidade do movimento
-    public Vector3 offset; // ajuste para posição inicial da câmera
+    public Transform player;           // Personagem a ser seguido
+    public float offsetX = 0f;         // Deslocamento horizontal
+    public float offsetZ = -10f;       // Profundidade fixa (padrão 2D)
+    public float smoothSpeed = 0.125f; // Suavização da câmera
+
+    public float minX = 0f;            // Limite mínimo no eixo X
+    public float maxX = 50f;           // Limite máximo no eixo X
+
+    private Vector3 velocity = Vector3.zero;
 
     void LateUpdate()
     {
-        // Pega a posição atual da câmera
-        Vector3 desiredPosition = new Vector3(player.position.x + offset.x, transform.position.y, transform.position.z);
+        if (player == null) return;
 
-        // Suaviza o movimento
-        Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed);
+        // Posição alvo apenas no eixo X
+        Vector3 targetPosition = new Vector3(
+            Mathf.Clamp(player.position.x + offsetX, minX, maxX), // restringe movimento
+            transform.position.y, // mantém Y fixo
+            offsetZ
+        );
 
-        // Aplica a posição
-        transform.position = smoothedPosition;
+        // Movimento suave da câmera
+        transform.position = Vector3.SmoothDamp(
+            transform.position,
+            targetPosition,
+            ref velocity,
+            smoothSpeed
+        );
     }
 }
