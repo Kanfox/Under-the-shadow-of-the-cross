@@ -4,17 +4,19 @@ public class PlayerController : MonoBehaviour
 {
     public float speed = 5f;          // Velocidade de movimento
     public float jumpForce = 7f;      // Força do pulo
+
     private Rigidbody2D rb;
     private Animator animator;
-    private bool isGrounded = true;   // Verifica se está no chão
+    private bool isGrounded = true;
+    private Vector3 originalScale;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
 
-        // Define o tamanho inicial do personagem
-        transform.localScale = new Vector3(1.561f, 2.0916f, 1f);
+        // Armazena a escala original
+        originalScale = transform.localScale;
     }
 
     void Update()
@@ -23,33 +25,23 @@ public class PlayerController : MonoBehaviour
         float move = Input.GetAxisRaw("Horizontal");
         rb.linearVelocity = new Vector2(move * speed, rb.linearVelocity.y);
 
-        // Virar personagem para esquerda/direita
-        if (move > 0)
-            transform.localScale = new Vector3(1.561f, 2.0916f, 1f);
-        else if (move < 0)
-            transform.localScale = new Vector3(-1.561f, 2.0916f, 1f);
+        // Virar personagem horizontalmente sem alterar altura/largura original
+        if (move < 0)
+            transform.localScale = new Vector3(-Mathf.Abs(originalScale.x), originalScale.y, originalScale.z);
+        else if (move > 0)
+            transform.localScale = new Vector3(Mathf.Abs(originalScale.x), originalScale.y, originalScale.z);
 
-        // Pular enquanto segura Space ou W
-        if ((Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.W)) && isGrounded)
+        // Pulo (apenas uma vez ao pressionar a tecla)
+        if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.W)) && isGrounded)
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f); // reseta velocidade vertical
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0); // Reseta velocidade vertical
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             isGrounded = false;
         }
 
-        // Animações
-        if (!isGrounded)
-        {
-            animator.Play("Jump"); // animação de pulo
-        }
-        else if (move != 0)
-        {
-            animator.Play("Run"); // animação de correr
-        }
-        else
-        {
-            animator.Play("Idle"); // animação parado
-        }
+        // ✅ Correção aplicada aqui:
+        animator.SetBool("isJumping", !isGrounded);
+        animator.SetBool("isRunning", Mathf.Abs(move) > 0 && isGrounded);
     }
 
     // Detecta colisão com o chão
@@ -59,7 +51,5 @@ public class PlayerController : MonoBehaviour
         {
             isGrounded = true;
         }
-
     }
-
 }
