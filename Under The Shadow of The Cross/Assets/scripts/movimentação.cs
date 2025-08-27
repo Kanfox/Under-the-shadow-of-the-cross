@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public float speed = 5f;          // Velocidade de movimento
-    public float jumpForce = 7f;      // Força do pulo
+    public float speed = 5f;
+    public float jumpForce = 7f;
 
     private Rigidbody2D rb;
     private Animator animator;
@@ -14,24 +14,21 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-
-        // Armazena a escala original
         originalScale = transform.localScale;
     }
 
     void Update()
     {
-        // Movimento horizontal
         float move = Input.GetAxisRaw("Horizontal");
         rb.linearVelocity = new Vector2(move * speed, rb.linearVelocity.y);
 
-        // Virar personagem horizontalmente sem alterar altura/largura original
+        // Virar personagem
         if (move < 0)
             transform.localScale = new Vector3(-Mathf.Abs(originalScale.x), originalScale.y, originalScale.z);
         else if (move > 0)
             transform.localScale = new Vector3(Mathf.Abs(originalScale.x), originalScale.y, originalScale.z);
 
-        // Pulo (apenas uma vez ao pressionar a tecla)
+        // Pulo
         if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.W)) && isGrounded)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0); // Reseta velocidade vertical
@@ -39,12 +36,34 @@ public class PlayerController : MonoBehaviour
             isGrounded = false;
         }
 
-        // ✅ Correção aplicada aqui:
-        animator.SetBool("isJumping", !isGrounded);
-        animator.SetBool("isRunning", Mathf.Abs(move) > 0 && isGrounded);
+        // ✅ Atualizar animações corretamente
+        bool isJumping = !isGrounded;
+        bool isRunning = Mathf.Abs(move) > 0 && isGrounded;
+        bool isIdle = move == 0 && isGrounded;
+
+        // 🔥 Aqui está a lógica que resolve seu problema:
+        if (isJumping)
+        {
+            animator.SetBool("isJumping", true);
+            animator.SetBool("isRunning", false);
+            animator.SetBool("isIdle", false);
+        }
+        else if (isRunning)
+        {
+            animator.SetBool("isJumping", false);
+            animator.SetBool("isRunning", true);
+            animator.SetBool("isIdle", false);
+        }
+        else if (isIdle)
+        {
+            animator.SetBool("isJumping", false);
+            animator.SetBool("isRunning", false);
+            animator.SetBool("isIdle", true);
+        }
+
+        Debug.Log("isJumping: " + isJumping + " | isRunning: " + isRunning + " | isIdle: " + isIdle);
     }
 
-    // Detecta colisão com o chão
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Chao"))
