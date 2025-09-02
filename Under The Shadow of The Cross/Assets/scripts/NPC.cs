@@ -7,11 +7,13 @@ public class EnemyAI : MonoBehaviour
     public float attackRange = 2f;
     public float damage = 10f;
     public float attackCooldown = 2f;
-    private float lastAttackTime;
+    private float LastAttackTime;
 
     private NavMeshAgent agent;
     private Animator animator;
     private Transform player;
+
+    private bool isGrounded; // Variável para detectar se está no chão
 
     void Start()
     {
@@ -24,6 +26,13 @@ public class EnemyAI : MonoBehaviour
     {
         if (player == null) return;
 
+        // Verifica se está no chão antes de permitir movimentação
+        if (!isGrounded)
+        {
+            // Pode colocar animação de queda ou parar movimentação aqui, se quiser
+            return;
+        }
+
         float distance = Vector3.Distance(transform.position, player.position);
 
         if (distance <= attackRange)
@@ -33,11 +42,11 @@ public class EnemyAI : MonoBehaviour
             animator.SetBool("isWalking", false);
             animator.SetBool("isIdle", false);
 
-            if (Time.time - lastAttackTime > attackCooldown)
+            if (Time.time > LastAttackTime + attackCooldown)
             {
                 animator.SetBool("isAttacking", true);
                 AttackPlayer();
-                lastAttackTime = Time.time;
+                LastAttackTime = Time.time;
             }
         }
         else if (distance <= detectionRange)
@@ -45,7 +54,6 @@ public class EnemyAI : MonoBehaviour
             // Perseguir
             agent.isStopped = false;
             agent.SetDestination(player.position);
-
             animator.SetBool("isWalking", true);
             animator.SetBool("isAttacking", false);
             animator.SetBool("isIdle", false);
@@ -54,7 +62,6 @@ public class EnemyAI : MonoBehaviour
         {
             // Parado (Idle)
             agent.isStopped = true;
-
             animator.SetBool("isWalking", false);
             animator.SetBool("isAttacking", false);
             animator.SetBool("isIdle", true);
@@ -63,11 +70,27 @@ public class EnemyAI : MonoBehaviour
 
     void AttackPlayer()
     {
-        // Aplica dano ao jogador
         PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
         if (playerHealth != null)
         {
             playerHealth.TakeDamage(damage);
+        }
+    }
+
+    // Detecta colisão com chão usando tag "chao"
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("chao"))
+        {
+            isGrounded = true;
+        }
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("chao"))
+        {
+            isGrounded = false;
         }
     }
 }
