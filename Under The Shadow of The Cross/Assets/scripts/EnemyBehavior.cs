@@ -103,7 +103,7 @@ public class EnemyBehavior : MonoBehaviour
 
         if (distanceToPlayer <= attackRange)
         {
-            playerHealth.TakeDamage(1);
+            playerHealth.TakeDamage(5);
         }
 
         // Tempo até sair do ataque
